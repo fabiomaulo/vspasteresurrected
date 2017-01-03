@@ -11,6 +11,7 @@
     <AssemblyName>Hunabku.VSPasteResurrected</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -20,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -28,10 +30,17 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="OpenLiveWriter.Api, Version=0.5.0.0, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\OpenLiveWriter.SDK.0.5.0-beta\lib\net452\OpenLiveWriter.Api.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -40,7 +49,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="InlineVSPaste.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RTF\ColorProcessor.cs" />
+    <Compile Include="RTF\HTMLRootProcessor.cs" />
+    <Compile Include="RTF\IProcessor.cs" />
+    <Compile Include="RTF\Parser.cs" />
+    <Compile Include="RTF\ProcessorStack.cs" />
+    <Compile Include="RTF\Scanner.cs" />
+    <Compile Include="RTF\VoidProcessor.cs" />
+    <Compile Include="VsPasteR.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
