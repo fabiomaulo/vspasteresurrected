@@ -6,7 +6,7 @@ using OpenLiveWriter.Api;
 
 namespace Hunabku.VSPasteResurrected
 {
-	[WriterPlugin("DC526D95-E80C-4E6C-B873-5B2F06F95039", "VS Paste", Description = "Easily transfer syntax highlighted source code from Visual Studio to elegant HTML in Windows Live Writer.", ImagePath = "VsPaste20_18.png", HasEditableOptions = true)]
+	[WriterPlugin("DC526D95-E80C-4E6C-B873-5B2F06F95039", "VS Paste", Description = "Easily transfer syntax highlighted source code from Visual Studio to elegant HTML in Open Live Writer.", ImagePath = "VsPaste20_18.png", HasEditableOptions = true)]
 	[InsertableContentSource("Paste from Visual Studio", SidebarText = "from Visual Studio")]
 	public class VsPasteR : ContentSource
 	{
