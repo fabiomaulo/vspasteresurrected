@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Hunabku.VSPasteResurrected.RTF
 {
-	public class HTMLRootProcessor : IProcessor
+	public class HtmlRootProcessor : IProcessor
 	{
 		private int? background;
 		private Encoding codepage = Encoding.Default;
@@ -18,7 +18,7 @@ namespace Hunabku.VSPasteResurrected.RTF
 		private readonly TextWriter writer;
 		private readonly Options options;
 
-		public HTMLRootProcessor(ProcessorStack stack, TextWriter writer, Options options)
+		public HtmlRootProcessor(ProcessorStack stack, TextWriter writer, Options options)
 		{
 			if (options == null)
 			{
@@ -91,11 +91,10 @@ namespace Hunabku.VSPasteResurrected.RTF
 			switch (word)
 			{
 				case "ansicpg":
-					if (!param.HasValue)
+					if (param.HasValue)
 					{
-						break;
+						codepage = Encoding.GetEncoding(param.Value);
 					}
-					codepage = Encoding.GetEncoding(param.Value);
 					break;
 				case "stylesheet":
 				case "fonttbl":
@@ -114,50 +113,17 @@ namespace Hunabku.VSPasteResurrected.RTF
 					Text('\n');
 					break;
 				case "cf":
-					int num1;
-					if (param.HasValue)
-					{
-						var nullable = param;
-						num1 = (nullable.GetValueOrDefault() != 0 ? 1 : (!nullable.HasValue ? 1 : 0)) == 0 ? 1 : 0;
-					}
-					else
-					{
-						num1 = 1;
-					}
-					if (num1 == 0)
-					{
-						nextColor = param.Value;
-						break;
-					}
-					nextColor = new int?();
+					nextColor = param.HasValue && param.Value != 0 ? param.Value : new int?();
 					break;
 				case "highlight":
-					int num2;
-					if (param.HasValue)
-					{
-						var nullable = param;
-						num2 = (nullable.GetValueOrDefault() != 0 ? 1 : (!nullable.HasValue ? 1 : 0)) == 0 ? 1 : 0;
-					}
-					else
-					{
-						num2 = 1;
-					}
-					if (num2 == 0)
-					{
-						nextBackground = param.Value;
-						break;
-					}
-					nextBackground = new int?();
+					nextBackground = param.HasValue && param.Value != 0 ? param.Value : new int?();
 					break;
 				case "u":
 					Text((char) param.Value);
 					skipText = true;
 					break;
 				case "'":
-					Text(codepage.GetChars(new byte[1]
-					{
-						(byte) param.Value
-					})[0]);
+					Text(codepage.GetChars(new[]{(byte) param.Value})[0]);
 					break;
 			}
 		}
@@ -184,7 +150,7 @@ namespace Hunabku.VSPasteResurrected.RTF
 				using (var stringReader = new StringReader(rtf))
 				{
 					var stack = new ProcessorStack();
-					var htmlRootProcessor = new HTMLRootProcessor(stack, stringWriter, options ?? new Options());
+					var htmlRootProcessor = new HtmlRootProcessor(stack, stringWriter, options ?? new Options());
 					stack.Push(htmlRootProcessor);
 					new Parser(new Scanner(stringReader), stack).Parse();
 					return stringWriter.ToString();
@@ -194,20 +160,7 @@ namespace Hunabku.VSPasteResurrected.RTF
 
 		private void SyncColors(bool bgOnly)
 		{
-			var nullable = background;
-			var nextBackground = this.nextBackground;
-			int num;
-			if ((nullable.GetValueOrDefault() != nextBackground.GetValueOrDefault() ? 1 : (nullable.HasValue != nextBackground.HasValue ? 1 : 0)) == 0)
-			{
-				nullable = color;
-				var nextColor = this.nextColor;
-				num = (nullable.GetValueOrDefault() != nextColor.GetValueOrDefault() ? 1 : (nullable.HasValue != nextColor.HasValue ? 1 : 0)) == 0 ? 1 : (bgOnly ? 1 : 0);
-			}
-			else
-			{
-				num = 0;
-			}
-			if (num != 0)
+			if (background == nextBackground && color == nextColor && !bgOnly)
 			{
 				return;
 			}
@@ -215,8 +168,8 @@ namespace Hunabku.VSPasteResurrected.RTF
 			{
 				writer.Write("</span>");
 			}
-			color = this.nextColor;
-			background = this.nextBackground;
+			color = nextColor;
+			background = nextBackground;
 			if (color.HasValue || background.HasValue)
 			{
 				writer.Write("<span style=\"");

@@ -18,8 +18,8 @@ namespace Hunabku.VSPasteResurrected
 					string data = (string)Clipboard.GetData(DataFormats.Rtf);
 					string rtf = Regex.Replace(data, "\\\\par }$", "}");
 					string str1 = Regex.Match(data, "\\\\fonttbl.*? (.+?);").Groups[1].Value;
-					string html = HTMLRootProcessor.FromRTF(rtf);
-					newContent = "<font face=\"" + str1 + ", Courier\">" + html + "</font>";
+					string html = HtmlRootProcessor.FromRTF(rtf);
+					newContent = "<font face=\"" + str1 + ", 'Courier New', Courier, Monospace\">" + html + "</font>";
 					if (newContent.Contains("\n"))
 						newContent = "<pre style=\"word-wrap: break-word; white-space: pre-wrap\">" + newContent + "</pre><br/>";
 					else
@@ -29,7 +29,7 @@ namespace Hunabku.VSPasteResurrected
 			}
 			catch
 			{
-				MessageBox.Show("VS Paste could not convert that content.", "VS Paste Problem", MessageBoxButtons.OK, MessageBoxIcon.Hand);
+				MessageBox.Show("Could not convert no RTF content.", "VS Paste Problem", MessageBoxButtons.OK, MessageBoxIcon.Hand);
 			}
 			return DialogResult.Cancel;
 		}

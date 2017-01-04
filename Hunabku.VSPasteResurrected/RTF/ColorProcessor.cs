@@ -37,6 +37,10 @@ namespace Hunabku.VSPasteResurrected.RTF
 
 		public void Word(string word, int? param)
 		{
+			if (!param.HasValue)
+			{
+				return;
+			}
 			switch (word)
 			{
 				case "red":
@@ -59,13 +63,13 @@ namespace Hunabku.VSPasteResurrected.RTF
 			{
 				return "black";
 			}
-			string str = null;
+			string str;
 			var color = colors[i];
 			if (namedColors.TryGetValue(color.ToArgb(), out str) && (str.Length <= 7))
 			{
 				return str.ToLower();
 			}
-			return string.Format("#{1:x2}{2:x2}{3:x2}", (object) i, (object) color.R, (object) color.G, (object) color.B);
+			return $"#{color.R:x2}{color.G:x2}{color.B:x2}";
 		}
 	}
 }

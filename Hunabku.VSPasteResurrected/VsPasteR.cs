@@ -14,14 +14,14 @@ namespace Hunabku.VSPasteResurrected
 			{
 				if (Clipboard.ContainsData(DataFormats.Rtf))
 				{
-					var html = HTMLRootProcessor.FromRTF((string)Clipboard.GetData(DataFormats.Rtf));
+					var html = HtmlRootProcessor.FromRTF((string)Clipboard.GetData(DataFormats.Rtf));
 					newContent = $"<div class=\"olwVSPaste\"><div>{html}</div></div>";
 					return DialogResult.OK;
 				}
 			}
 			catch
 			{
-				MessageBox.Show("VS Paste could not convert that content.", "VS Paste Problem", MessageBoxButtons.OK, MessageBoxIcon.Hand);
+				MessageBox.Show("Could not convert no RTF content.", "VS Paste Problem", MessageBoxButtons.OK, MessageBoxIcon.Hand);
 			}
 			return DialogResult.Cancel;
 		}
