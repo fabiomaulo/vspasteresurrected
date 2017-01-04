@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Hunabku.VSPasteResurrected.RTF;
 using OpenLiveWriter.Api;
@@ -9,27 +10,30 @@ namespace Hunabku.VSPasteResurrected
 	[InsertableContentSource("Inline Paste from Visual Studio", SidebarText = "inline from Visual Studio")]
 	public class InlineVsPaste: ContentSource
 	{
+		private static readonly Regex rtfNewlineRegex= new Regex("\\\\par }$");
+		private static readonly Regex rtfFontRegex = new Regex("\\\\fonttbl.*? (.+?);");
 		public override DialogResult CreateContent(IWin32Window dialogOwner, ref string newContent)
 		{
 			try
 			{
 				if (Clipboard.ContainsData(DataFormats.Rtf))
 				{
-					string data = (string)Clipboard.GetData(DataFormats.Rtf);
-					string rtf = Regex.Replace(data, "\\\\par }$", "}");
-					string str1 = Regex.Match(data, "\\\\fonttbl.*? (.+?);").Groups[1].Value;
-					string html = HtmlRootProcessor.FromRTF(rtf);
-					newContent = "<font face=\"" + str1 + ", 'Courier New', Courier, Monospace\">" + html + "</font>";
+					string rtf = (string) Clipboard.GetData(DataFormats.Rtf);
+					string rtfNoNewline = rtfNewlineRegex.Replace(rtf, "}");
+					string fontName = rtfFontRegex.Match(rtf).Groups[1].Value;
+					string html = HtmlRootProcessor.FromRTF(rtfNoNewline);
+
+					newContent = "<font face=\"" + fontName + ", 'Courier New', Courier, Monospace\">" + html + "</font>";
 					if (newContent.Contains("\n"))
-						newContent = "<pre style=\"word-wrap: break-word; white-space: pre-wrap\">" + newContent + "</pre><br/>";
+						newContent = $"<pre style=\"word-wrap: break-word; white-space: pre-wrap\">{newContent}</pre><br/>";
 					else
 						newContent += " ";
 					return DialogResult.OK;
 				}
 			}
-			catch
+			catch (Exception e)
 			{
-				MessageBox.Show("Could not convert no RTF content.", "VS Paste Problem", MessageBoxButtons.OK, MessageBoxIcon.Hand);
+				MessageBox.Show("Could not convert RTF content:"+e.Message, "VS Paste Problem", MessageBoxButtons.OK, MessageBoxIcon.Hand);
 			}
 			return DialogResult.Cancel;
 		}
