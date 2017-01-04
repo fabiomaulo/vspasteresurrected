@@ -1,127 +1,88 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Text;
 
 namespace Hunabku.VSPasteResurrected.RTF
 {
-	internal class HTMLRootProcessor : IProcessor
+	public class HTMLRootProcessor : IProcessor
 	{
-		private bool skipText = false;
-		private Encoding codepage = Encoding.Default;
-		private int depth = 0;
-		private ProcessorStack stack;
-		private TextWriter writer;
-		private ColorProcessor colors;
-		private int? color;
 		private int? background;
-		private int? nextColor;
+		private Encoding codepage = Encoding.Default;
+		private int? color;
+		private readonly ColorProcessor colors;
+		private int depth;
 		private int? nextBackground;
+		private int? nextColor;
+		private bool skipText;
+		private readonly ProcessorStack stack;
+		private readonly TextWriter writer;
+		private readonly Options options;
 
-		public HTMLRootProcessor(ProcessorStack stack, TextWriter writer)
+		public HTMLRootProcessor(ProcessorStack stack, TextWriter writer, Options options)
 		{
-			this.colors = new ColorProcessor();
+			if (options == null)
+			{
+				throw new ArgumentNullException(nameof(options));
+			}
+			colors = new ColorProcessor();
 			this.stack = stack;
 			this.writer = writer;
-		}
-
-		public static string FromRTF(string rtf)
-		{
-			using (StringWriter stringWriter = new StringWriter())
-			{
-				using (StringReader stringReader = new StringReader(rtf))
-				{
-					ProcessorStack stack = new ProcessorStack();
-					HTMLRootProcessor htmlRootProcessor = new HTMLRootProcessor(stack, (TextWriter)stringWriter);
-					stack.Push((IProcessor)htmlRootProcessor);
-					new Parser(new Scanner((TextReader)stringReader), (IProcessor)stack).Parse();
-					return stringWriter.ToString();
-				}
-			}
+			this.options = options;
 		}
 
 		public void Open()
 		{
-			++this.depth;
+			++depth;
 		}
 
 		public void Close()
 		{
-			--this.depth;
-			if (this.depth != 0)
+			--depth;
+			if (depth != 0)
+			{
 				return;
-			this.nextColor = new int?();
-			this.nextBackground = new int?();
-			this.SyncColors(false);
+			}
+			nextColor = new int?();
+			nextBackground = new int?();
+			SyncColors(false);
 		}
 
 		public void Text(char c)
 		{
-			if (this.skipText)
+			if (skipText)
 			{
-				this.skipText = false;
+				skipText = false;
 			}
 			else
 			{
-				this.SyncColors(char.IsWhiteSpace(c));
+				SyncColors(char.IsWhiteSpace(c));
 				switch (c)
 				{
 					case '\t':
-						this.writer.Write("    ");
-						break;
-					case '\n':
+						writer.Write(options.TabToSpace);
 						break;
 					case '\r':
+						writer.Write("<br/>");
+						break;
+					case '\n':
+						writer.Write("\n");
 						break;
 					case '&':
-						this.writer.Write("&amp;");
+						writer.Write("&amp;");
 						break;
 					case '<':
-						this.writer.Write("&lt;");
+						writer.Write("&lt;");
 						break;
 					case '>':
-						this.writer.Write("&gt;");
+						writer.Write("&gt;");
+						break;
+					case ' ':
+						writer.Write("&nbsp;");
 						break;
 					default:
-						this.writer.Write(c);
+						writer.Write(c);
 						break;
 				}
-			}
-		}
-
-		private void SyncColors(bool bgOnly)
-		{
-			int? nullable = this.background;
-			int? nextBackground = this.nextBackground;
-			int num;
-			if ((nullable.GetValueOrDefault() != nextBackground.GetValueOrDefault() ? 1 : (nullable.HasValue != nextBackground.HasValue ? 1 : 0)) == 0)
-			{
-				nullable = this.color;
-				int? nextColor = this.nextColor;
-				num = (nullable.GetValueOrDefault() != nextColor.GetValueOrDefault() ? 1 : (nullable.HasValue != nextColor.HasValue ? 1 : 0)) == 0 ? 1 : (bgOnly ? 1 : 0);
-			}
-			else
-				num = 0;
-			if (num != 0)
-				return;
-			if (this.color.HasValue || this.background.HasValue)
-				this.writer.Write("</span>");
-			this.color = this.nextColor;
-			this.background = this.nextBackground;
-			if (this.color.HasValue || this.background.HasValue)
-			{
-				this.writer.Write("<span style=\"");
-				if (this.color.HasValue)
-				{
-					this.writer.Write("color:");
-					this.writer.Write(this.colors.CssColor(this.color.Value));
-				}
-				if (this.background.HasValue)
-				{
-					if (this.color.HasValue)
-						this.writer.Write(';');
-					this.writer.Write("background:");
-					this.writer.Write(this.colors.CssColor(this.background.Value));
-				}
-				this.writer.Write("\">");
 			}
 		}
 
@@ -131,64 +92,71 @@ namespace Hunabku.VSPasteResurrected.RTF
 			{
 				case "ansicpg":
 					if (!param.HasValue)
+					{
 						break;
-					this.codepage = Encoding.GetEncoding(param.Value);
+					}
+					codepage = Encoding.GetEncoding(param.Value);
 					break;
 				case "stylesheet":
 				case "fonttbl":
-					this.stack.Push((IProcessor)new VoidProcessor());
-					--this.depth;
+					stack.Push(new VoidProcessor());
+					--depth;
 					break;
 				case "colortbl":
-					this.stack.Push((IProcessor)this.colors);
-					--this.depth;
+					stack.Push(colors);
+					--depth;
 					break;
 				case "tab":
-					this.Text('\t');
+					Text('\t');
 					break;
 				case "par":
-					this.writer.Write("\r\n");
+					Text('\r');
+					Text('\n');
 					break;
 				case "cf":
 					int num1;
 					if (param.HasValue)
 					{
-						int? nullable = param;
+						var nullable = param;
 						num1 = (nullable.GetValueOrDefault() != 0 ? 1 : (!nullable.HasValue ? 1 : 0)) == 0 ? 1 : 0;
 					}
 					else
+					{
 						num1 = 1;
+					}
 					if (num1 == 0)
 					{
-						this.nextColor = new int?(param.Value);
+						nextColor = param.Value;
 						break;
 					}
-					this.nextColor = new int?();
+					nextColor = new int?();
 					break;
 				case "highlight":
 					int num2;
 					if (param.HasValue)
 					{
-						int? nullable = param;
+						var nullable = param;
 						num2 = (nullable.GetValueOrDefault() != 0 ? 1 : (!nullable.HasValue ? 1 : 0)) == 0 ? 1 : 0;
 					}
 					else
+					{
 						num2 = 1;
+					}
 					if (num2 == 0)
 					{
-						this.nextBackground = new int?(param.Value);
+						nextBackground = param.Value;
 						break;
 					}
-					this.nextBackground = new int?();
+					nextBackground = new int?();
 					break;
 				case "u":
-					this.Text((char)param.Value);
-					this.skipText = true;
+					Text((char) param.Value);
+					skipText = true;
 					break;
 				case "'":
-					this.Text(this.codepage.GetChars(new byte[1]
+					Text(codepage.GetChars(new byte[1]
 					{
-					(byte) param.Value
+						(byte) param.Value
 					})[0]);
 					break;
 			}
@@ -199,13 +167,74 @@ namespace Hunabku.VSPasteResurrected.RTF
 			switch (symbol)
 			{
 				case '*':
-					this.stack.Push((IProcessor)new VoidProcessor());
+					stack.Push(new VoidProcessor());
 					break;
 				case '\\':
 				case '{':
 				case '}':
-					this.Text(symbol);
+					Text(symbol);
 					break;
+			}
+		}
+
+		public static string FromRTF(string rtf, Options options = null)
+		{
+			using (var stringWriter = new StringWriter())
+			{
+				using (var stringReader = new StringReader(rtf))
+				{
+					var stack = new ProcessorStack();
+					var htmlRootProcessor = new HTMLRootProcessor(stack, stringWriter, options ?? new Options());
+					stack.Push(htmlRootProcessor);
+					new Parser(new Scanner(stringReader), stack).Parse();
+					return stringWriter.ToString();
+				}
+			}
+		}
+
+		private void SyncColors(bool bgOnly)
+		{
+			var nullable = background;
+			var nextBackground = this.nextBackground;
+			int num;
+			if ((nullable.GetValueOrDefault() != nextBackground.GetValueOrDefault() ? 1 : (nullable.HasValue != nextBackground.HasValue ? 1 : 0)) == 0)
+			{
+				nullable = color;
+				var nextColor = this.nextColor;
+				num = (nullable.GetValueOrDefault() != nextColor.GetValueOrDefault() ? 1 : (nullable.HasValue != nextColor.HasValue ? 1 : 0)) == 0 ? 1 : (bgOnly ? 1 : 0);
+			}
+			else
+			{
+				num = 0;
+			}
+			if (num != 0)
+			{
+				return;
+			}
+			if (color.HasValue || background.HasValue)
+			{
+				writer.Write("</span>");
+			}
+			color = this.nextColor;
+			background = this.nextBackground;
+			if (color.HasValue || background.HasValue)
+			{
+				writer.Write("<span style=\"");
+				if (color.HasValue)
+				{
+					writer.Write("color:");
+					writer.Write(colors.CssColor(color.Value));
+				}
+				if (background.HasValue)
+				{
+					if (color.HasValue)
+					{
+						writer.Write(';');
+					}
+					writer.Write("background:");
+					writer.Write(colors.CssColor(background.Value));
+				}
+				writer.Write("\">");
 			}
 		}
 	}

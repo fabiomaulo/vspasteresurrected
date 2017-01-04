@@ -1,6 +1,6 @@
 ﻿namespace Hunabku.VSPasteResurrected.RTF
 {
-	internal interface IProcessor
+	public interface IProcessor
 	{
 		void Open();
 

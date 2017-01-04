@@ -2,7 +2,7 @@
 
 namespace Hunabku.VSPasteResurrected.RTF
 {
-	internal class ProcessorStack : IProcessor
+	public class ProcessorStack : IProcessor
 	{
 		private readonly Stack<IProcessor> stack = new Stack<IProcessor>();
 
