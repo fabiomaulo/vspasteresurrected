@@ -28,6 +28,7 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormDefaultOptions));
 			this.panel1 = new System.Windows.Forms.Panel();
 			this.btnCancel = new System.Windows.Forms.Button();
 			this.btnSave = new System.Windows.Forms.Button();
@@ -36,19 +37,19 @@
 			this.label2 = new System.Windows.Forms.Label();
 			this.inInLineStyles = new System.Windows.Forms.CheckBox();
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
-			this.label3 = new System.Windows.Forms.Label();
-			this.label4 = new System.Windows.Forms.Label();
-			this.label5 = new System.Windows.Forms.Label();
-			this.label6 = new System.Windows.Forms.Label();
-			this.inMaxHeight = new System.Windows.Forms.NumericUpDown();
-			this.inFontSize = new System.Windows.Forms.NumericUpDown();
-			this.inFontFamiles = new System.Windows.Forms.TextBox();
 			this.inBackgroundColor = new System.Windows.Forms.TextBox();
+			this.inFontFamiles = new System.Windows.Forms.TextBox();
+			this.inFontSize = new System.Windows.Forms.NumericUpDown();
+			this.inMaxHeight = new System.Windows.Forms.NumericUpDown();
+			this.label6 = new System.Windows.Forms.Label();
+			this.label5 = new System.Windows.Forms.Label();
+			this.label4 = new System.Windows.Forms.Label();
+			this.label3 = new System.Windows.Forms.Label();
 			this.panel1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.inTabSpaces)).BeginInit();
 			this.groupBox1.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.inMaxHeight)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.inFontSize)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.inMaxHeight)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// panel1
@@ -136,63 +137,21 @@
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "Inline css Styles";
 			// 
-			// label3
+			// inBackgroundColor
 			// 
-			this.label3.AutoSize = true;
-			this.label3.Location = new System.Drawing.Point(6, 26);
-			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(121, 17);
-			this.label3.TabIndex = 4;
-			this.label3.Text = "Background Color";
+			this.inBackgroundColor.Location = new System.Drawing.Point(139, 23);
+			this.inBackgroundColor.Name = "inBackgroundColor";
+			this.inBackgroundColor.Size = new System.Drawing.Size(127, 22);
+			this.inBackgroundColor.TabIndex = 11;
 			// 
-			// label4
+			// inFontFamiles
 			// 
-			this.label4.AutoSize = true;
-			this.label4.Location = new System.Drawing.Point(6, 56);
-			this.label4.Name = "label4";
-			this.label4.Size = new System.Drawing.Size(67, 17);
-			this.label4.TabIndex = 5;
-			this.label4.Text = "Font Size";
-			// 
-			// label5
-			// 
-			this.label5.AutoSize = true;
-			this.label5.Location = new System.Drawing.Point(6, 86);
-			this.label5.Name = "label5";
-			this.label5.Size = new System.Drawing.Size(78, 17);
-			this.label5.TabIndex = 6;
-			this.label5.Text = "Max Height";
-			// 
-			// label6
-			// 
-			this.label6.AutoSize = true;
-			this.label6.Location = new System.Drawing.Point(6, 116);
-			this.label6.Name = "label6";
-			this.label6.Size = new System.Drawing.Size(88, 17);
-			this.label6.TabIndex = 7;
-			this.label6.Text = "Font Familes";
-			// 
-			// inMaxHeight
-			// 
-			this.inMaxHeight.Location = new System.Drawing.Point(139, 84);
-			this.inMaxHeight.Maximum = new decimal(new int[] {
-            1000,
-            0,
-            0,
-            0});
-			this.inMaxHeight.Minimum = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-			this.inMaxHeight.Name = "inMaxHeight";
-			this.inMaxHeight.Size = new System.Drawing.Size(66, 22);
-			this.inMaxHeight.TabIndex = 8;
-			this.inMaxHeight.Value = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
+			this.inFontFamiles.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.inFontFamiles.Location = new System.Drawing.Point(139, 113);
+			this.inFontFamiles.Name = "inFontFamiles";
+			this.inFontFamiles.Size = new System.Drawing.Size(273, 22);
+			this.inFontFamiles.TabIndex = 10;
 			// 
 			// inFontSize
 			// 
@@ -216,21 +175,63 @@
             0,
             0});
 			// 
-			// inFontFamiles
+			// inMaxHeight
 			// 
-			this.inFontFamiles.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.inFontFamiles.Location = new System.Drawing.Point(139, 113);
-			this.inFontFamiles.Name = "inFontFamiles";
-			this.inFontFamiles.Size = new System.Drawing.Size(273, 22);
-			this.inFontFamiles.TabIndex = 10;
+			this.inMaxHeight.Location = new System.Drawing.Point(139, 84);
+			this.inMaxHeight.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+			this.inMaxHeight.Minimum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+			this.inMaxHeight.Name = "inMaxHeight";
+			this.inMaxHeight.Size = new System.Drawing.Size(66, 22);
+			this.inMaxHeight.TabIndex = 8;
+			this.inMaxHeight.Value = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
 			// 
-			// inBackgroundColor
+			// label6
 			// 
-			this.inBackgroundColor.Location = new System.Drawing.Point(139, 23);
-			this.inBackgroundColor.Name = "inBackgroundColor";
-			this.inBackgroundColor.Size = new System.Drawing.Size(127, 22);
-			this.inBackgroundColor.TabIndex = 11;
+			this.label6.AutoSize = true;
+			this.label6.Location = new System.Drawing.Point(6, 116);
+			this.label6.Name = "label6";
+			this.label6.Size = new System.Drawing.Size(88, 17);
+			this.label6.TabIndex = 7;
+			this.label6.Text = "Font Familes";
+			// 
+			// label5
+			// 
+			this.label5.AutoSize = true;
+			this.label5.Location = new System.Drawing.Point(6, 86);
+			this.label5.Name = "label5";
+			this.label5.Size = new System.Drawing.Size(78, 17);
+			this.label5.TabIndex = 6;
+			this.label5.Text = "Max Height";
+			// 
+			// label4
+			// 
+			this.label4.AutoSize = true;
+			this.label4.Location = new System.Drawing.Point(6, 56);
+			this.label4.Name = "label4";
+			this.label4.Size = new System.Drawing.Size(67, 17);
+			this.label4.TabIndex = 5;
+			this.label4.Text = "Font Size";
+			// 
+			// label3
+			// 
+			this.label3.AutoSize = true;
+			this.label3.Location = new System.Drawing.Point(6, 26);
+			this.label3.Name = "label3";
+			this.label3.Size = new System.Drawing.Size(121, 17);
+			this.label3.TabIndex = 4;
+			this.label3.Text = "Background Color";
 			// 
 			// FormDefaultOptions
 			// 
@@ -243,6 +244,7 @@
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.inTabSpaces);
 			this.Controls.Add(this.panel1);
+			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MinimumSize = new System.Drawing.Size(381, 325);
 			this.Name = "FormDefaultOptions";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
@@ -252,8 +254,8 @@
 			((System.ComponentModel.ISupportInitialize)(this.inTabSpaces)).EndInit();
 			this.groupBox1.ResumeLayout(false);
 			this.groupBox1.PerformLayout();
-			((System.ComponentModel.ISupportInitialize)(this.inMaxHeight)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.inFontSize)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.inMaxHeight)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
